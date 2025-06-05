@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoipEx Android 클라이언트 기술 명세서</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        
+        h3 {
+            color: #7f8c8d;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .tech-stack {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .tech-stack ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .tech-stack li {
+            padding: 8px 0;
+            border-bottom: 1px solid #bdc3c7;
+        }
+        
+        .tech-stack li:last-child {
+            border-bottom: none;
+        }
+        
+        .tech-stack li strong {
+            color: #2c3e50;
+            min-width: 150px;
+            display: inline-block;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .feature-card {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .feature-card h4 {
+            color: #3498db;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        .architecture {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #e9ecef;
+        }
+        
+        .code-block {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .api-endpoint {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .api-endpoint code {
+            background-color: #ffffff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>VoipEx Android 클라이언트 기술 명세서</h1>
+        
+        <div class="section">
+            <h2>1. 프로젝트 개요</h2>
+            <p><strong>프로젝트명:</strong> VoipEx Android Client</p>
+            <p><strong>목적:</strong> VoipEx 서버와 연동하여 1:1 음성/영상 통화 기능을 제공하는 Android 애플리케이션</p>
+            <p><strong>대상 플랫폼:</strong> Android 10 (API Level 29) 이상</p>
+            <p><strong>주요 기능:</strong> WebRTC 기반 실시간 음성/영상 통화, Socket.IO 기반 시그널링</p>
+        </div>
+
+        <div class="section">
+            <h2>2. 기술 스택</h2>
+            <div class="tech-stack">
+                <ul>
+                    <li><strong>개발 언어:</strong> Kotlin 1.9.0</li>
+                    <li><strong>최소 SDK:</strong> API 29 (Android 10)</li>
+                    <li><strong>타겟 SDK:</strong> API 34 (Android 14)</li>
+                    <li><strong>빌드 도구:</strong> Gradle 8.2</li>
+                    <li><strong>아키텍처:</strong> MVVM (Model-View-ViewModel)</li>
+                    <li><strong>의존성 주입:</strong> Hilt 2.48</li>
+                    <li><strong>네트워킹:</strong> Retrofit 2.9.0, OkHttp 4.12.0</li>
+                    <li><strong>WebRTC:</strong> Google WebRTC 1.0.32006</li>
+                    <li><strong>Socket.IO:</strong> Socket.IO Client 2.1.0</li>
+                    <li><strong>비동기 처리:</strong> Coroutines 1.7.3</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>3. 시스템 아키텍처</h2>
+            <div class="architecture">
+                <h3>3.1 전체 아키텍처</h3>
+                <pre>
+┌─────────────────────────────────────────────────────────┐
+│                   Android Client                         │
+├─────────────────────────────────────────────────────────┤
+│  Presentation Layer (UI)                                │
+│  ├─ Activities/Fragments                                │
+│  ├─ ViewModels                                         │
+│  └─ Data Binding                                       │
+├─────────────────────────────────────────────────────────┤
+│  Domain Layer                                           │
+│  ├─ Use Cases                                          │
+│  ├─ Repository Interfaces                              │
+│  └─ Domain Models                                      │
+├─────────────────────────────────────────────────────────┤
+│  Data Layer                                             │
+│  ├─ Repository Implementations                          │
+│  ├─ Remote Data Sources                                │
+│  │  ├─ REST API (Retrofit)                            │
+│  │  ├─ WebSocket (Socket.IO)                          │
+│  │  └─ WebRTC                                         │
+│  └─ Local Data Sources (Room DB)                       │
+└─────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────┐
+│                   VoipEx Server                         │
+│  ├─ API Gateway (Port 3000)                           │
+│  ├─ Auth Service (Port 3001)                          │
+│  ├─ User Service (Port 3002)                          │
+│  ├─ Call Service (Port 3003)                          │
+│  ├─ Signaling Service (Port 3004)                     │
+│  └─ Media Service (Port 3005)                         │
+└─────────────────────────────────────────────────────────┘
+                </pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>4. 주요 기능 명세</h2>
+            <div class="feature-list">
+                <div class="feature-card">
+                    <h4>4.1 사용자 인증</h4>
+                    <ul>
+                        <li>회원가입 (이메일/비밀번호)</li>
+                        <li>로그인/로그아웃</li>
+                        <li>게스트 모드 로그인</li>
+                        <li>JWT 토큰 기반 인증</li>
+                        <li>자동 로그인</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>4.2 연락처 관리</h4>
+                    <ul>
+                        <li>사용자 검색</li>
+                        <li>연락처 추가/삭제</li>
+                        <li>온라인 상태 표시</li>
+                        <li>프로필 조회</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>4.3 통화 기능</h4>
+                    <ul>
+                        <li>1:1 음성 통화</li>
+                        <li>1:1 영상 통화</li>
+                        <li>Direct Call (게스트 모드)</li>
+                        <li>통화 중 음소거</li>
+                        <li>카메라 전환 (전면/후면)</li>
+                        <li>스피커폰 전환</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>4.4 통화 제어</h4>
+                    <ul>
+                        <li>전화 걸기/받기</li>
+                        <li>통화 거절</li>
+                        <li>통화 종료</li>
+                        <li>부재중 전화 알림</li>
+                        <li>게스트 간 룸 코드 기반 연결</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>5. API 엔드포인트</h2>
+            
+            <h3>5.1 인증 API</h3>
+            <div class="api-endpoint">
+                <strong>POST</strong> <code>/api/auth/register</code> - 회원가입
+            </div>
+            <div class="api-endpoint">
+                <strong>POST</strong> <code>/api/auth/login</code> - 로그인
+            </div>
+            <div class="api-endpoint">
+                <strong>POST</strong> <code>/api/auth/guest</code> - 게스트 토큰 발급
+            </div>
+            <div class="api-endpoint">
+                <strong>POST</strong> <code>/api/auth/logout</code> - 로그아웃
+            </div>
+            
+            <h3>5.2 사용자 API</h3>
+            <div class="api-endpoint">
+                <strong>GET</strong> <code>/api/users/profile</code> - 프로필 조회
+            </div>
+            <div class="api-endpoint">
+                <strong>PUT</strong> <code>/api/users/profile</code> - 프로필 수정
+            </div>
+            <div class="api-endpoint">
+                <strong>GET</strong> <code>/api/users/search</code> - 사용자 검색
+            </div>
+            
+            <h3>5.3 통화 API</h3>
+            <div class="api-endpoint">
+                <strong>POST</strong> <code>/api/calls/initiate</code> - 통화 시작
+            </div>
+            <div class="api-endpoint">
+                <strong>POST</strong> <code>/api/calls/end</code> - 통화 종료
+            </div>
+            <div class="api-endpoint">
+                <strong>GET</strong> <code>/api/calls/history</code> - 통화 기록
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>6. WebRTC 시그널링 프로토콜</h2>
+            
+            <h3>6.1 Socket.IO 이벤트</h3>
+            <table>
+                <tr>
+                    <th>이벤트명</th>
+                    <th>방향</th>
+                    <th>설명</th>
+                    <th>페이로드</th>
+                </tr>
+                <tr>
+                    <td>join-room</td>
+                    <td>Client → Server</td>
+                    <td>통화방 입장</td>
+                    <td>{roomId: string}</td>
+                </tr>
+                <tr>
+                    <td>offer</td>
+                    <td>Client ↔ Server</td>
+                    <td>WebRTC Offer 전송</td>
+                    <td>{targetUserId: string, offer: RTCSessionDescription}</td>
+                </tr>
+                <tr>
+                    <td>answer</td>
+                    <td>Client ↔ Server</td>
+                    <td>WebRTC Answer 전송</td>
+                    <td>{targetUserId: string, answer: RTCSessionDescription}</td>
+                </tr>
+                <tr>
+                    <td>ice-candidate</td>
+                    <td>Client ↔ Server</td>
+                    <td>ICE Candidate 교환</td>
+                    <td>{targetUserId: string, candidate: RTCIceCandidate}</td>
+                </tr>
+                <tr>
+                    <td>toggle-audio</td>
+                    <td>Client → Server</td>
+                    <td>음소거 상태 변경</td>
+                    <td>{isEnabled: boolean}</td>
+                </tr>
+                <tr>
+                    <td>toggle-video</td>
+                    <td>Client → Server</td>
+                    <td>비디오 상태 변경</td>
+                    <td>{isEnabled: boolean}</td>
+                </tr>
+                <tr>
+                    <td>user-left</td>
+                    <td>Server → Client</td>
+                    <td>상대방 통화 종료</td>
+                    <td>{userId: string}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>7. 주요 클래스 설계</h2>
+            
+            <h3>7.1 WebRTC Manager</h3>
+            <div class="code-block">
+class WebRTCManager(
+    private val context: Context,
+    private val signallingClient: SignallingClient
+) {
+    private var peerConnection: PeerConnection? = null
+    private val eglBase = EglBase.create()
+    
+    fun initializePeerConnection(
+        iceServers: List<PeerConnection.IceServer>,
+        isVideoCall: Boolean
+    ) {
+        // PeerConnection 초기화
+    }
+    
+    fun createOffer() {
+        // Offer 생성 및 전송
+    }
+    
+    fun handleAnswer(answer: SessionDescription) {
+        // Answer 처리
+    }
+    
+    fun addIceCandidate(candidate: IceCandidate) {
+        // ICE Candidate 추가
+    }
+    
+    fun toggleAudio(enabled: Boolean) {
+        // 오디오 트랙 제어
+    }
+    
+    fun toggleVideo(enabled: Boolean) {
+        // 비디오 트랙 제어
+    }
+}
+            </div>
+            
+            <h3>7.2 Socket.IO Client</h3>
+            <div class="code-block">
+class SignallingClient(
+    private val serverUrl: String,
+    private val authToken: String
+) {
+    private lateinit var socket: Socket
+    
+    fun connect() {
+        val options = IO.Options().apply {
+            auth = mapOf("token" to authToken)
+        }
+        socket = IO.socket(serverUrl, options)
+        setupEventListeners()
+        socket.connect()
+    }
+    
+    private fun setupEventListeners() {
+        socket.on("offer") { args ->
+            // Offer 수신 처리
+        }
+        
+        socket.on("answer") { args ->
+            // Answer 수신 처리
+        }
+        
+        socket.on("ice-candidate") { args ->
+            // ICE Candidate 수신 처리
+        }
+    }
+    
+    fun sendOffer(targetUserId: String, offer: SessionDescription) {
+        socket.emit("offer", JSONObject().apply {
+            put("targetUserId", targetUserId)
+            put("offer", offer.toJSON())
+        })
+    }
+}
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>8. 권한 요구사항</h2>
+            <div class="warning">
+                <h4>필수 권한</h4>
+                <ul>
+                    <li><strong>CAMERA</strong> - 영상 통화를 위한 카메라 접근</li>
+                    <li><strong>RECORD_AUDIO</strong> - 음성 통화를 위한 마이크 접근</li>
+                    <li><strong>INTERNET</strong> - 네트워크 통신</li>
+                    <li><strong>MODIFY_AUDIO_SETTINGS</strong> - 오디오 설정 변경</li>
+                    <li><strong>ACCESS_NETWORK_STATE</strong> - 네트워크 상태 확인</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>9. 보안 고려사항</h2>
+            <ul>
+                <li>모든 API 통신은 HTTPS를 통해 암호화</li>
+                <li>JWT 토큰은 SharedPreferences의 암호화된 저장소에 보관</li>
+                <li>WebRTC 연결은 SRTP를 통해 미디어 스트림 암호화</li>
+                <li>TURN 서버 인증을 통한 릴레이 서버 보안</li>
+                <li>사용자 비밀번호는 서버에서 bcrypt로 해시화</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>10. 게스트 모드 시나리오</h2>
+            <div class="info">
+                <h4>게스트 모드 사용 흐름</h4>
+                <ol>
+                    <li><strong>게스트 로그인</strong>
+                        <ul>
+                            <li>로그인 화면에서 "Continue as Guest" 버튼 클릭</li>
+                            <li>서버에서 게스트 JWT 토큰 발급 (role: 'guest')</li>
+                            <li>자동 생성된 게스트 ID (예: Guest_a1b2c3d4)</li>
+                        </ul>
+                    </li>
+                    <li><strong>메인 화면</strong>
+                        <ul>
+                            <li>연락처 목록 대신 게스트 모드 안내 표시</li>
+                            <li>Direct Call FAB 버튼 활성화</li>
+                            <li>타이틀바에 "VoipEx - Guest Mode" 표시</li>
+                        </ul>
+                    </li>
+                    <li><strong>Direct Call</strong>
+                        <ul>
+                            <li>FAB 버튼 클릭 시 룸 코드 입력 다이얼로그</li>
+                            <li>통화 타입 선택 (음성/영상)</li>
+                            <li>동일한 룸 코드 입력한 사용자와 자동 연결</li>
+                        </ul>
+                    </li>
+                    <li><strong>통화 연결</strong>
+                        <ul>
+                            <li>Socket.IO를 통한 시그널링</li>
+                            <li>WebRTC P2P 연결 수립</li>
+                            <li>서버 측 사용자 검증 없이 통화 진행</li>
+                        </ul>
+                    </li>
+                </ol>
+                
+                <h4>게스트 모드 특징</h4>
+                <ul>
+                    <li>회원가입 불필요</li>
+                    <li>통화 기록 저장 안 됨</li>
+                    <li>간단한 룸 코드로 빠른 연결</li>
+                    <li>임시 세션 (앱 종료 시 소멸)</li>
+                </ul>
+            </div>
+        </div>
+            <ul>
+                <li>비디오 코덱: VP8/H.264 자동 선택</li>
+                <li>적응형 비트레이트: 네트워크 상태에 따른 품질 조정</li>
+                <li>에코 캔슬레이션 및 노이즈 억제 적용</li>
+                <li>백그라운드 서비스를 통한 통화 유지</li>
+                <li>배터리 최적화 예외 처리</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>12. 테스트 계획</h2>
+            <div class="info">
+                <h4>테스트 시나리오</h4>
+                <ol>
+                    <li>회원가입 및 로그인 프로세스</li>
+                    <li>게스트 모드 로그인</li>
+                    <li>사용자 검색 및 연락처 추가</li>
+                    <li>음성 통화 발신/수신/종료</li>
+                    <li>영상 통화 발신/수신/종료</li>
+                    <li>게스트 간 Direct Call (동일 룸 코드)</li>
+                    <li>통화 중 기능 (음소거, 카메라 전환 등)</li>
+                    <li>네트워크 전환 시 통화 유지</li>
+                    <li>백그라운드 전환 시 통화 유지</li>
+                    <li>다양한 네트워크 환경에서의 통화 품질</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

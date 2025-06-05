@@ -1,0 +1,34 @@
+# Android/IntelliJ
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.ap_
+*.db
+*.log
+*.keystore
+*.jks
+*.hprof
+*.orig
+*.rej
+*.swp
+*.lock
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+*.pyc
+*.pyo
+*.class
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/

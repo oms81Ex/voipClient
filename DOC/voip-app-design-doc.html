@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoipEx Android 클라이언트 설계도</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        
+        h3 {
+            color: #7f8c8d;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .screen-flow {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #e9ecef;
+        }
+        
+        .code-block {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .code-block .comment {
+            color: #95a5a6;
+        }
+        
+        .code-block .keyword {
+            color: #3498db;
+        }
+        
+        .code-block .string {
+            color: #2ecc71;
+        }
+        
+        .ui-component {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #bdc3c7;
+        }
+        
+        .directory-structure {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        .flow-diagram {
+            background-color: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .gradle-config {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .screen-mockup {
+            border: 2px solid #333;
+            border-radius: 20px;
+            padding: 40px 20px;
+            background-color: #f5f5f5;
+            width: 300px;
+            margin: 20px auto;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>VoipEx Android 클라이언트 설계도</h1>
+        
+        <div class="section">
+            <h2>1. 프로젝트 구조</h2>
+            <div class="directory-structure">
+app/
+├── src/
+│   ├── main/
+│   │   ├── java/com/voipex/android/
+│   │   │   ├── VoipExApplication.kt
+│   │   │   ├── data/
+│   │   │   │   ├── api/
+│   │   │   │   │   ├── AuthApi.kt
+│   │   │   │   │   ├── UserApi.kt
+│   │   │   │   │   └── CallApi.kt
+│   │   │   │   ├── models/
+│   │   │   │   │   ├── User.kt
+│   │   │   │   │   ├── Call.kt
+│   │   │   │   │   └── AuthResponse.kt
+│   │   │   │   ├── repository/
+│   │   │   │   │   ├── AuthRepository.kt
+│   │   │   │   │   ├── UserRepository.kt
+│   │   │   │   │   └── CallRepository.kt
+│   │   │   │   └── local/
+│   │   │   │       ├── PreferencesManager.kt
+│   │   │   │       └── CallDatabase.kt
+│   │   │   ├── domain/
+│   │   │   │   ├── usecase/
+│   │   │   │   │   ├── LoginUseCase.kt
+│   │   │   │   │   ├── RegisterUseCase.kt
+│   │   │   │   │   ├── MakeCallUseCase.kt
+│   │   │   │   │   └── EndCallUseCase.kt
+│   │   │   │   └── model/
+│   │   │   │       └── CallState.kt
+│   │   │   ├── presentation/
+│   │   │   │   ├── ui/
+│   │   │   │   │   ├── auth/
+│   │   │   │   │   │   ├── LoginActivity.kt
+│   │   │   │   │   │   ├── LoginViewModel.kt
+│   │   │   │   │   │   ├── RegisterActivity.kt
+│   │   │   │   │   │   └── RegisterViewModel.kt
+│   │   │   │   │   ├── main/
+│   │   │   │   │   │   ├── MainActivity.kt
+│   │   │   │   │   │   ├── MainViewModel.kt
+│   │   │   │   │   │   └── ContactsAdapter.kt
+│   │   │   │   │   ├── call/
+│   │   │   │   │   │   ├── CallActivity.kt
+│   │   │   │   │   │   ├── CallViewModel.kt
+│   │   │   │   │   │   └── IncomingCallActivity.kt
+│   │   │   │   │   └── common/
+│   │   │   │   │       └── BaseActivity.kt
+│   │   │   │   └── theme/
+│   │   │   │       ├── Color.kt
+│   │   │   │       ├── Theme.kt
+│   │   │   │       └── Type.kt
+│   │   │   ├── webrtc/
+│   │   │   │   ├── WebRTCManager.kt
+│   │   │   │   ├── SignallingClient.kt
+│   │   │   │   ├── PeerConnectionObserver.kt
+│   │   │   │   └── RTCUtils.kt
+│   │   │   ├── service/
+│   │   │   │   ├── CallService.kt
+│   │   │   │   └── CallNotificationManager.kt
+│   │   │   ├── di/
+│   │   │   │   ├── AppModule.kt
+│   │   │   │   ├── NetworkModule.kt
+│   │   │   │   └── DatabaseModule.kt
+│   │   │   └── utils/
+│   │   │       ├── Constants.kt
+│   │   │       ├── Extensions.kt
+│   │   │       └── PermissionUtils.kt
+│   │   ├── res/
+│   │   │   ├── layout/
+│   │   │   │   ├── activity_login.xml
+│   │   │   │   ├── activity_register.xml
+│   │   │   │   ├── activity_main.xml
+│   │   │   │   ├── activity_call.xml
+│   │   │   │   ├── activity_incoming_call.xml
+│   │   │   │   └── item_contact.xml
+│   │   │   ├── values/
+│   │   │   │   ├── colors.xml
+│   │   │   │   ├── strings.xml
+│   │   │   │   └── themes.xml
+│   │   │   └── drawable/
+│   │   └── AndroidManifest.xml
+│   └── test/
+└── build.gradle.kts
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>2. 화면 흐름도</h2>
+            <div class="screen-flow">
+                <pre>
+┌─────────────┐     ┌──────────────┐     ┌─────────────┐
+│   Splash    │ ──> │    Login     │ ──> │    Main     │
+│   Screen    │     │    Screen    │     │   Screen    │
+└─────────────┘     └──────────────┘     └─────────────┘
+                            │                     │
+                            ├─────────┐           │
+                            ↓         ↓           ↓
+                    ┌──────────────┐ ┌────────────┐ ┌─────────────┐
+                    │   Register   │ │Guest Mode  │ │    Call     │
+                    │    Screen    │ │   Main     │ │   Screen    │
+                    └──────────────┘ └────────────┘ └─────────────┘
+                                          │              │
+                                          ↓              ↓
+                                    ┌──────────────┐ ┌─────────────┐
+                                    │ Direct Call  │ │  Incoming   │
+                                    │   Dialog     │ │    Call     │
+                                    └──────────────┘ └─────────────┘
+                </pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>3. 주요 화면 설계</h2>
+            
+            <h3>3.1 로그인 화면</h3>
+            <div class="ui-component">
+                <h4>구성 요소:</h4>
+                <ul>
+                    <li>앱 로고</li>
+                    <li>이메일 입력 필드 (TextInputLayout)</li>
+                    <li>비밀번호 입력 필드 (TextInputLayout)</li>
+                    <li>로그인 버튼 (MaterialButton)</li>
+                    <li>구분선 및 "OR" 텍스트</li>
+                    <li>게스트 모드 버튼 (MaterialButton)</li>
+                    <li>회원가입 링크 (TextView)</li>
+                </ul>
+                
+                <div class="screen-mockup">
+                    <h5>VoipEx</h5>
+                    <div style="margin: 20px 0;">
+                        <input type="email" placeholder="이메일" style="width: 100%; padding: 10px; margin: 5px 0;">
+                        <input type="password" placeholder="비밀번호" style="width: 100%; padding: 10px; margin: 5px 0;">
+                    </div>
+                    <button style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 4px;">로그인</button>
+                    <div style="margin: 20px 0; text-align: center; color: #666;">
+                        <span style="display: inline-block; width: 30%; height: 1px; background: #ccc; vertical-align: middle;"></span>
+                        <span style="margin: 0 10px;">OR</span>
+                        <span style="display: inline-block; width: 30%; height: 1px; background: #ccc; vertical-align: middle;"></span>
+                    </div>
+                    <button style="width: 100%; padding: 12px; background: #2ecc71; color: white; border: none; border-radius: 4px;">게스트로 계속하기</button>
+                    <p style="margin-top: 20px;">계정이 없으신가요? <a href="#">회원가입</a></p>
+                </div>
+            </div>
+            
+            <h3>3.2 메인 화면 (연락처 목록)</h3>
+            <div class="ui-component">
+                <h4>구성 요소:</h4>
+                <ul>
+                    <li>상단 툴바 (검색 아이콘, 설정 아이콘)</li>
+                    <li>연락처 목록 (RecyclerView)</li>
+                    <li>온라인 상태 표시 (녹색 점)</li>
+                    <li>플로팅 액션 버튼 (연락처 추가)</li>
+                </ul>
+                
+                <div class="screen-mockup">
+                    <div style="background: #3498db; color: white; padding: 10px; margin: -40px -20px 20px -20px;">
+                        <h5 style="margin: 0;">연락처</h5>
+                    </div>
+                    <div style="text-align: left;">
+                        <div style="padding: 10px; border-bottom: 1px solid #eee;">
+                            <span style="color: #2ecc71;">●</span> 김철수
+                        </div>
+                        <div style="padding: 10px; border-bottom: 1px solid #eee;">
+                            <span style="color: #95a5a6;">●</span> 이영희
+                        </div>
+                        <div style="padding: 10px;">
+                            <span style="color: #2ecc71;">●</span> 박민수
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>3.3 메인 화면 (게스트 모드)</h3>
+            <div class="ui-component">
+                <h4>구성 요소:</h4>
+                <ul>
+                    <li>상단 툴바 ("VoipEx - Guest Mode")</li>
+                    <li>빈 상태 뷰 (안내 텍스트 및 아이콘)</li>
+                    <li>Direct Call 플로팅 액션 버튼</li>
+                </ul>
+                
+                <div class="screen-mockup">
+                    <div style="background: #3498db; color: white; padding: 10px; margin: -40px -20px 20px -20px;">
+                        <h5 style="margin: 0;">VoipEx - Guest Mode</h5>
+                    </div>
+                    <div style="text-align: center; padding: 40px 0;">
+                        <div style="font-size: 48px; color: #95a5a6;">📞</div>
+                        <h4 style="margin-top: 20px;">게스트 모드</h4>
+                        <p style="color: #95a5a6; margin-top: 10px;">아래 버튼을 눌러<br>직접 통화를 시작하세요</p>
+                    </div>
+                    <div style="position: absolute; bottom: 20px; right: 20px;">
+                        <button style="width: 56px; height: 56px; border-radius: 50%; background: #3498db; border: none; color: white; font-size: 24px;">📞</button>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>3.4 Direct Call 다이얼로그</h3>
+            <div class="ui-component">
+                <h4>구성 요소:</h4>
+                <ul>
+                    <li>다이얼로그 제목 ("Direct Call")</li>
+                    <li>사용자 ID/룸 코드 입력 필드</li>
+                    <li>안내 메시지 ("Note: Both users should enter the same ID")</li>
+                    <li>취소/통화 버튼</li>
+                </ul>
+                
+                <div class="screen-mockup" style="width: 280px; padding: 20px;">
+                    <h5 style="margin: 0 0 20px 0;">Direct Call</h5>
+                    <p style="margin-bottom: 10px; font-size: 14px;">Enter the user ID to call</p>
+                    <input type="text" placeholder="Enter User ID or Room Code" style="width: 100%; padding: 10px; margin: 5px 0;">
+                    <p style="font-size: 12px; color: #666; margin: 10px 0;">Note: Both users should enter the same ID</p>
+                    <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                        <button style="padding: 8px 16px; margin-right: 10px; background: none; border: none; color: #3498db;">Cancel</button>
+                        <button style="padding: 8px 16px; background: #3498db; color: white; border: none; border-radius: 4px;">Call</button>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>3.5 통화 화면</h3>
+            <div class="ui-component">
+                <h4>구성 요소:</h4>
+                <ul>
+                    <li>상대방 비디오 뷰 (전체 화면)</li>
+                    <li>내 비디오 뷰 (PIP 모드)</li>
+                    <li>통화 시간 표시</li>
+                    <li>컨트롤 버튼 (음소거, 비디오 켜기/끄기, 카메라 전환, 종료)</li>
+                </ul>
+                
+                <div class="screen-mockup">
+                    <div style="height: 200px; background: #34495e; color: white; display: flex; align-items: center; justify-content: center;">
+                        <div>
+                            <h5>김철수</h5>
+                            <p>00:35</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-around; margin-top: 30px;">
+                        <button style="width: 50px; height: 50px; border-radius: 50%; border: none;">🔇</button>
+                        <button style="width: 50px; height: 50px; border-radius: 50%; border: none;">📹</button>
+                        <button style="width: 50px; height: 50px; border-radius: 50%; border: none;">🔄</button>
+                        <button style="width: 50px; height: 50px; border-radius: 50%; background: #e74c3c; border: none;">📞</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>4. 핵심 구현 코드</h2>
+            
+            <h3>4.1 build.gradle.kts (Module)</h3>
+            <div class="gradle-config">
+android {
+    namespace = "com.voipex.android"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.voipex.android"
+        minSdk = 29
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    buildFeatures {
+        viewBinding = true
+        dataBinding = true
+    }
+}
+
+dependencies {
+    // Core Android
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.11.0")
+    
+    // Architecture Components
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+    implementation("androidx.activity:activity-ktx:1.8.2")
+    
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-compiler:2.48")
+    
+    // Networking
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    
+    // WebRTC
+    implementation("org.webrtc:google-webrtc:1.0.32006")
+    
+    // Socket.IO
+    implementation("io.socket:socket.io-client:2.1.0")
+    
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    
+    // Room
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+}
+            </div>
+            
+            <h3>4.2 WebRTC Manager 구현</h3>
+            <div class="code-block">
+<span class="keyword">class</span> WebRTCManager(
+    <span class="keyword">private val</span> context: Context,
+    <span class="keyword">private val</span> signallingClient: SignallingClient
+) {
+    <span class="keyword">private val</span> peerConnectionFactory: PeerConnectionFactory
+    <span class="keyword">private var</span> peerConnection: PeerConnection? = <span class="keyword">null</span>
+    <span class="keyword">private val</span> eglBase = EglBase.create()
+    <span class="keyword">private val</span> iceServers = <span class="keyword">listOf</span>(
+        PeerConnection.IceServer.builder(<span class="string">"stun:stun.l.google.com:19302"</span>)
+            .createIceServer()
+    )
+    
+    <span class="keyword">init</span> {
+        <span class="comment">// WebRTC 초기화</span>
+        initializePeerConnectionFactory()
+    }
+    
+    <span class="keyword">private fun</span> initializePeerConnectionFactory() {
+        PeerConnectionFactory.initialize(
+            PeerConnectionFactory.InitializationOptions
+                .builder(context)
+                .createInitializationOptions()
+        )
+        
+        <span class="keyword">val</span> options = PeerConnectionFactory.Options()
+        <span class="keyword">val</span> defaultVideoEncoderFactory = DefaultVideoEncoderFactory(
+            eglBase.eglBaseContext, <span class="keyword">true</span>, <span class="keyword">true</span>
+        )
+        <span class="keyword">val</span> defaultVideoDecoderFactory = DefaultVideoDecoderFactory(eglBase.eglBaseContext)
+        
+        peerConnectionFactory = PeerConnectionFactory.builder()
+            .setOptions(options)
+            .setAudioDeviceModule(createAudioDeviceModule())
+            .setVideoEncoderFactory(defaultVideoEncoderFactory)
+            .setVideoDecoderFactory(defaultVideoDecoderFactory)
+            .createPeerConnectionFactory()
+    }
+    
+    <span class="keyword">fun</span> createPeerConnection(observer: PeerConnection.Observer) {
+        <span class="keyword">val</span> rtcConfig = PeerConnection.RTCConfiguration(iceServers).apply {
+            bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE
+            rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.REQUIRE
+            tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.DISABLED
+            continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY
+        }
+        
+        peerConnection = peerConnectionFactory.createPeerConnection(
+            rtcConfig,
+            observer
+        )
+    }
+    
+    <span class="keyword">fun</span> createOffer() {
+        <span class="keyword">val</span> constraints = MediaConstraints().apply {
+            mandatory.add(MediaConstraints.KeyValuePair(<span class="string">"OfferToReceiveAudio"</span>, <span class="string">"true"</span>))
+            mandatory.add(MediaConstraints.KeyValuePair(<span class="string">"OfferToReceiveVideo"</span>, <span class="string">"true"</span>))
+        }
+        
+        peerConnection?.createOffer(<span class="keyword">object</span> : SdpObserver {
+            <span class="keyword">override fun</span> onCreateSuccess(sessionDescription: SessionDescription) {
+                peerConnection?.setLocalDescription(<span class="keyword">object</span> : SdpObserver {
+                    <span class="keyword">override fun</span> onSetSuccess() {
+                        signallingClient.sendOffer(sessionDescription)
+                    }
+                    <span class="comment">// 다른 콜백 메서드들...</span>
+                }, sessionDescription)
+            }
+            <span class="comment">// 다른 콜백 메서드들...</span>
+        }, constraints)
+    }
+}
+            </div>
+            
+            <h3>4.3 Socket.IO 시그널링 클라이언트</h3>
+            <div class="code-block">
+<span class="keyword">class</span> SignallingClient(
+    <span class="keyword">private val</span> serverUrl: String = <span class="string">"http://your-server:3004"</span>
+) {
+    <span class="keyword">private lateinit var</span> socket: Socket
+    <span class="keyword">private val</span> gson = Gson()
+    
+    <span class="keyword">var</span> onOfferReceived: ((SessionDescription) -> Unit)? = <span class="keyword">null</span>
+    <span class="keyword">var</span> onAnswerReceived: ((SessionDescription) -> Unit)? = <span class="keyword">null</span>
+    <span class="keyword">var</span> onIceCandidateReceived: ((IceCandidate) -> Unit)? = <span class="keyword">null</span>
+    
+    <span class="keyword">fun</span> connect(authToken: String) {
+        <span class="keyword">val</span> options = IO.Options().apply {
+            auth = <span class="keyword">mapOf</span>(<span class="string">"token"</span> to authToken)
+            transports = <span class="keyword">arrayOf</span>(<span class="string">"websocket"</span>)
+        }
+        
+        socket = IO.socket(serverUrl, options)
+        setupEventListeners()
+        socket.connect()
+    }
+    
+    <span class="keyword">private fun</span> setupEventListeners() {
+        socket.on(<span class="string">"offer"</span>) { args ->
+            <span class="keyword">val</span> data = args[<span class="keyword">0</span>] <span class="keyword">as</span> JSONObject
+            <span class="keyword">val</span> offer = SessionDescription(
+                SessionDescription.Type.OFFER,
+                data.getJSONObject(<span class="string">"offer"</span>).getString(<span class="string">"sdp"</span>)
+            )
+            onOfferReceived?.invoke(offer)
+        }
+        
+        socket.on(<span class="string">"answer"</span>) { args ->
+            <span class="keyword">val</span> data = args[<span class="keyword">0</span>] <span class="keyword">as</span> JSONObject
+            <span class="keyword">val</span> answer = SessionDescription(
+                SessionDescription.Type.ANSWER,
+                data.getJSONObject(<span class="string">"answer"</span>).getString(<span class="string">"sdp"</span>)
+            )
+            onAnswerReceived?.invoke(answer)
+        }
+        
+        socket.on(<span class="string">"ice-candidate"</span>) { args ->
+            <span class="keyword">val</span> data = args[<span class="keyword">0</span>] <span class="keyword">as</span> JSONObject
+            <span class="keyword">val</span> candidateData = data.getJSONObject(<span class="string">"candidate"</span>)
+            <span class="keyword">val</span> candidate = IceCandidate(
+                candidateData.getString(<span class="string">"sdpMid"</span>),
+                candidateData.getInt(<span class="string">"sdpMLineIndex"</span>),
+                candidateData.getString(<span class="string">"candidate"</span>)
+            )
+            onIceCandidateReceived?.invoke(candidate)
+        }
+    }
+    
+    <span class="keyword">fun</span> joinRoom(roomId: String) {
+        socket.emit(<span class="string">"join-room"</span>, roomId)
+    }
+    
+    <span class="keyword">fun</span> sendOffer(offer: SessionDescription, targetUserId: String) {
+        <span class="keyword">val</span> json = JSONObject().apply {
+            put(<span class="string">"targetUserId"</span>, targetUserId)
+            put(<span class="string">"offer"</span>, JSONObject().apply {
+                put(<span class="string">"type"</span>, offer.type.toString())
+                put(<span class="string">"sdp"</span>, offer.description)
+            })
+        }
+        socket.emit(<span class="string">"offer"</span>, json)
+    }
+}
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>5. 통화 플로우</h2>
+            <div class="flow-diagram">
+                <h3>일반 사용자 통화 플로우</h3>
+                <pre>
+1. 연락처에서 통화 버튼 클릭
+    ↓
+2. CallActivity 시작
+    ↓
+3. 권한 확인 (카메라, 마이크)
+    ↓
+4. WebRTC PeerConnection 생성
+    ↓
+5. 로컬 미디어 스트림 획득
+    ↓
+6. Socket.IO로 통화방 입장
+    ↓
+7. WebRTC Offer 생성 및 전송
+    ↓
+8. 상대방 Answer 수신
+    ↓
+9. ICE Candidate 교환
+    ↓
+10. P2P 연결 확립 및 통화 시작
+                </pre>
+            </div>
+            
+            <div class="flow-diagram">
+                <h3>게스트 모드 Direct Call 플로우</h3>
+                <pre>
+1. Direct Call FAB 클릭
+    ↓
+2. 룸 코드 입력 다이얼로그
+    ↓
+3. 통화 타입 선택 (음성/영상)
+    ↓
+4. 권한 확인 (카메라, 마이크)
+    ↓
+5. DirectCallActivity 시작
+    ↓
+6. WebRTC PeerConnection 생성
+    ↓
+7. 입력한 룸 코드로 Socket.IO 룸 입장
+    ↓
+8. 동일 룸의 다른 게스트와 시그널링
+    ↓
+9. WebRTC Offer/Answer 교환
+    ↓
+10. ICE Candidate 교환
+    ↓
+11. P2P 연결 확립 및 통화 시작
+                </pre>
+            </div>
+            
+            <div class="flow-diagram">
+                <h3>수신자 (Callee) 플로우</h3>
+                <pre>
+1. FCM 푸시 알림 수신
+    ↓
+2. IncomingCallActivity 표시
+    ↓
+3. 수락/거절 선택
+    ↓
+4. [수락 시] CallActivity 시작
+    ↓
+5. WebRTC PeerConnection 생성
+    ↓
+6. 로컬 미디어 스트림 획득
+    ↓
+7. Socket.IO로 통화방 입장
+    ↓
+8. 수신한 Offer에 대한 Answer 생성
+    ↓
+9. ICE Candidate 교환
+    ↓
+10. P2P 연결 확립 및 통화 시작
+                </pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>6. 데이터베이스 설계</h2>
+            <h3>6.1 Room Database Schema</h3>
+            <div class="code-block">
+<span class="keyword">@Entity</span>(tableName = <span class="string">"users"</span>)
+<span class="keyword">data class</span> UserEntity(
+    <span class="keyword">@PrimaryKey val</span> id: String,
+    <span class="keyword">val</span> email: String,
+    <span class="keyword">val</span> name: String,
+    <span class="keyword">val</span> profileImage: String?,
+    <span class="keyword">val</span> isOnline: Boolean = <span class="keyword">false</span>
+)
+
+<span class="keyword">@Entity</span>(tableName = <span class="string">"call_history"</span>)
+<span class="keyword">data class</span> CallHistoryEntity(
+    <span class="keyword">@PrimaryKey val</span> id: String,
+    <span class="keyword">val</span> callerId: String,
+    <span class="keyword">val</span> calleeId: String,
+    <span class="keyword">val</span> callerName: String,
+    <span class="keyword">val</span> calleeName: String,
+    <span class="keyword">val</span> callType: String, <span class="comment">// "audio" or "video"</span>
+    <span class="keyword">val</span> startTime: Long,
+    <span class="keyword">val</span> endTime: Long?,
+    <span class="keyword">val</span> duration: Int?, <span class="comment">// seconds</span>
+    <span class="keyword">val</span> status: String <span class="comment">// "completed", "missed", "rejected"</span>
+)
+
+<span class="keyword">@Database</span>(
+    entities = [UserEntity::<span class="keyword">class</span>, CallHistoryEntity::<span class="keyword">class</span>],
+    version = <span class="keyword">1</span>,
+    exportSchema = <span class="keyword">false</span>
+)
+<span class="keyword">@TypeConverters</span>(Converters::<span class="keyword">class</span>)
+<span class="keyword">abstract class</span> VoipExDatabase : RoomDatabase() {
+    <span class="keyword">abstract fun</span> userDao(): UserDao
+    <span class="keyword">abstract fun</span> callHistoryDao(): CallHistoryDao
+}
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>7. 보안 구현</h2>
+            <h3>7.1 토큰 관리</h3>
+            <div class="code-block">
+<span class="keyword">@Singleton</span>
+<span class="keyword">class</span> PreferencesManager <span class="keyword">@Inject constructor</span>(
+    <span class="keyword">@ApplicationContext private val</span> context: Context
+) {
+    <span class="keyword">private val</span> sharedPreferences = context.getSharedPreferences(
+        <span class="string">"voipex_prefs"</span>,
+        Context.MODE_PRIVATE
+    )
+    
+    <span class="keyword">private val</span> encryptedSharedPreferences = EncryptedSharedPreferences.create(
+        <span class="string">"voipex_secure_prefs"</span>,
+        MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
+        context,
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
+    
+    <span class="keyword">fun</span> saveAuthToken(token: String) {
+        encryptedSharedPreferences.edit()
+            .putString(KEY_AUTH_TOKEN, token)
+            .apply()
+    }
+    
+    <span class="keyword">fun</span> getAuthToken(): String? {
+        <span class="keyword">return</span> encryptedSharedPreferences.getString(KEY_AUTH_TOKEN, <span class="keyword">null</span>)
+    }
+    
+    <span class="keyword">companion object</span> {
+        <span class="keyword">private const val</span> KEY_AUTH_TOKEN = <span class="string">"auth_token"</span>
+    }
+}
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>8. 서비스 구현</h2>
+            <h3>8.1 Call Service (포그라운드 서비스)</h3>
+            <div class="code-block">
+<span class="keyword">class</span> CallService : Service() {
+    <span class="keyword">private lateinit var</span> notificationManager: CallNotificationManager
+    <span class="keyword">private var</span> callTimer: Timer? = <span class="keyword">null</span>
+    <span class="keyword">private var</span> callDuration = <span class="keyword">0</span>
+    
+    <span class="keyword">override fun</span> onCreate() {
+        <span class="keyword">super</span>.onCreate()
+        notificationManager = CallNotificationManager(this)
+    }
+    
+    <span class="keyword">override fun</span> onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        <span class="keyword">when</span> (intent?.action) {
+            ACTION_START_CALL -> startCall()
+            ACTION_END_CALL -> endCall()
+            ACTION_MUTE -> toggleMute()
+        }
+        <span class="keyword">return</span> START_STICKY
+    }
+    
+    <span class="keyword">private fun</span> startCall() {
+        <span class="comment">// 포그라운드 서비스 시작</span>
+        <span class="keyword">val</span> notification = notificationManager.createCallNotification(
+            <span class="string">"통화 중"</span>,
+            <span class="string">"00:00"</span>
+        )
+        startForeground(NOTIFICATION_ID, notification)
+        
+        <span class="comment">// 통화 타이머 시작</span>
+        startCallTimer()
+    }
+    
+    <span class="keyword">private fun</span> startCallTimer() {
+        callTimer = Timer()
+        callTimer?.scheduleAtFixedRate(<span class="keyword">object</span> : TimerTask() {
+            <span class="keyword">override fun</span> run() {
+                callDuration++
+                updateNotification()
+            }
+        }, <span class="keyword">0</span>, <span class="keyword">1000</span>)
+    }
+    
+    <span class="keyword">private fun</span> updateNotification() {
+        <span class="keyword">val</span> minutes = callDuration / <span class="keyword">60</span>
+        <span class="keyword">val</span> seconds = callDuration % <span class="keyword">60</span>
+        <span class="keyword">val</span> timeString = String.format(<span class="string">"%02d:%02d"</span>, minutes, seconds)
+        
+        <span class="keyword">val</span> notification = notificationManager.createCallNotification(
+            <span class="string">"통화 중"</span>,
+            timeString
+        )
+        notificationManager.notify(NOTIFICATION_ID, notification)
+    }
+}
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>9. 테스트 시나리오</h2>
+            <table>
+                <tr>
+                    <th>테스트 항목</th>
+                    <th>시나리오</th>
+                    <th>예상 결과</th>
+                </tr>
+                <tr>
+                    <td>회원가입</td>
+                    <td>유효한 이메일과 비밀번호로 가입</td>
+                    <td>가입 성공 후 자동 로그인</td>
+                </tr>
+                <tr>
+                    <td>로그인</td>
+                    <td>등록된 계정으로 로그인</td>
+                    <td>메인 화면으로 이동</td>
+                </tr>
+                <tr>
+                    <td>음성 통화 발신</td>
+                    <td>온라인 사용자에게 음성 통화</td>
+                    <td>통화 연결 및 음성 전송</td>
+                </tr>
+                <tr>
+                    <td>영상 통화 발신</td>
+                    <td>온라인 사용자에게 영상 통화</td>
+                    <td>통화 연결 및 영상/음성 전송</td>
+                </tr>
+                <tr>
+                    <td>통화 수신</td>
+                    <td>다른 사용자로부터 통화 수신</td>
+                    <td>수신 화면 표시 및 벨소리</td>
+                </tr>
+                <tr>
+                    <td>통화 중 기능</td>
+                    <td>음소거, 카메라 끄기 등</td>
+                    <td>정상 작동 및 상대방에 상태 전달</td>
+                </tr>
+                <tr>
+                    <td>네트워크 전환</td>
+                    <td>WiFi ↔ LTE 전환</td>
+                    <td>통화 유지 또는 재연결</td>
+                </tr>
+                <tr>
+                    <td>백그라운드 전환</td>
+                    <td>통화 중 홈 버튼 클릭</td>
+                    <td>통화 유지 및 알림 표시</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>10. 배포 준비</h2>
+            <div class="info">
+                <h4>체크리스트</h4>
+                <ul>
+                    <li>ProGuard 규칙 설정 (WebRTC, Socket.IO 클래스 보호)</li>
+                    <li>서명 키 생성 및 안전한 보관</li>
+                    <li>서버 URL을 BuildConfig로 관리</li>
+                    <li>민감한 정보는 local.properties에 저장</li>
+                    <li>앱 난독화 설정</li>
+                    <li>릴리즈 빌드 최적화</li>
+                    <li>Google Play 스토어 등록 정보 준비</li>
+                    <li>개인정보처리방침 작성</li>
+                </ul>
+            </div>
+            
+            <h3>10.1 ProGuard 규칙</h3>
+            <div class="code-block">
+<span class="comment"># WebRTC</span>
+-keep class org.webrtc.** { *; }
+-dontwarn org.webrtc.**
+
+<span class="comment"># Socket.IO</span>
+-keep class io.socket.** { *; }
+-keep class com.github.nkzawa.** { *; }
+
+<span class="comment"># Gson</span>
+-keepattributes Signature
+-keepattributes *Annotation*
+-dontwarn sun.misc.**
+-keep class com.google.gson.** { *; }
+
+<span class="comment"># Retrofit</span>
+-keepattributes Signature, InnerClasses, EnclosingMethod
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+
+<span class="comment"># 앱 모델 클래스</span>
+-keep class com.voipex.android.data.models.** { *; }
+-keepclassmembers class com.voipex.android.data.models.** { *; }
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>11. 성능 최적화 가이드</h2>
+            
+            <h3>11.1 메모리 관리</h3>
+            <ul>
+                <li>비디오 뷰 재사용을 위한 ViewHolder 패턴 적용</li>
+                <li>비트맵 메모리 관리 (Glide 라이브러리 활용)</li>
+                <li>액티비티 종료 시 WebRTC 리소스 해제</li>
+                <li>메모리 누수 방지를 위한 WeakReference 사용</li>
+            </ul>
+            
+            <h3>11.2 배터리 최적화</h3>
+            <ul>
+                <li>Doze 모드 예외 처리 요청</li>
+                <li>백그라운드 제한 예외 설정</li>
+                <li>음성 통화 시 비디오 트랙 비활성화</li>
+                <li>화면 꺼짐 시 비디오 일시정지</li>
+            </ul>
+            
+            <h3>11.3 네트워크 최적화</h3>
+            <div class="code-block">
+<span class="comment">// 적응형 비트레이트 설정</span>
+<span class="keyword">fun</span> configureAdaptiveBitrate(peerConnection: PeerConnection) {
+    <span class="comment">// 비디오 비트레이트 제한</span>
+    <span class="keyword">val</span> videoSender = peerConnection.senders.find { 
+        it.track()?.kind() == <span class="string">"video"</span> 
+    }
+    
+    videoSender?.parameters?.let { params ->
+        params.encodings.forEach { encoding ->
+            encoding.maxBitrateBps = <span class="keyword">1_000_000</span> <span class="comment">// 1 Mbps</span>
+            encoding.minBitrateBps = <span class="keyword">100_000</span>   <span class="comment">// 100 Kbps</span>
+            encoding.scaleResolutionDownBy = <span class="keyword">1.0</span>
+        }
+        videoSender.setParameters(params)
+    }
+    
+    <span class="comment">// 오디오 비트레이트 제한</span>
+    <span class="keyword">val</span> audioSender = peerConnection.senders.find { 
+        it.track()?.kind() == <span class="string">"audio"</span> 
+    }
+    
+    audioSender?.parameters?.let { params ->
+        params.encodings.forEach { encoding ->
+            encoding.maxBitrateBps = <span class="keyword">32_000</span> <span class="comment">// 32 Kbps</span>
+        }
+        audioSender.setParameters(params)
+    }
+}
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>12. 오류 처리 및 복구</h2>
+            
+            <h3>12.1 연결 실패 처리</h3>
+            <div class="code-block">
+<span class="keyword">sealed class</span> CallError {
+    <span class="keyword">object</span> NetworkError : CallError()
+    <span class="keyword">object</span> PeerConnectionError : CallError()
+    <span class="keyword">object</span> MediaAccessError : CallError()
+    <span class="keyword">object</span> SignalingError : CallError()
+    <span class="keyword">data class</span> UnknownError(val message: String) : CallError()
+}
+
+<span class="keyword">class</span> CallErrorHandler {
+    <span class="keyword">fun</span> handleError(error: CallError): ErrorAction {
+        <span class="keyword">return when</span> (error) {
+            <span class="keyword">is</span> CallError.NetworkError -> ErrorAction.Retry
+            <span class="keyword">is</span> CallError.PeerConnectionError -> ErrorAction.Reconnect
+            <span class="keyword">is</span> CallError.MediaAccessError -> ErrorAction.RequestPermission
+            <span class="keyword">is</span> CallError.SignalingError -> ErrorAction.RestartSignaling
+            <span class="keyword">is</span> CallError.UnknownError -> ErrorAction.ShowError(error.message)
+        }
+    }
+}
+
+<span class="keyword">sealed class</span> ErrorAction {
+    <span class="keyword">object</span> Retry : ErrorAction()
+    <span class="keyword">object</span> Reconnect : ErrorAction()
+    <span class="keyword">object</span> RequestPermission : ErrorAction()
+    <span class="keyword">object</span> RestartSignaling : ErrorAction()
+    <span class="keyword">data class</span> ShowError(val message: String) : ErrorAction()
+}
+            </div>
+            
+            <h3>12.2 자동 재연결 메커니즘</h3>
+            <div class="code-block">
+<span class="keyword">class</span> ConnectionManager {
+    <span class="keyword">private val</span> maxRetries = <span class="keyword">3</span>
+    <span class="keyword">private var</span> retryCount = <span class="keyword">0</span>
+    <span class="keyword">private val</span> retryDelay = <span class="keyword">2000L</span> <span class="comment">// 2초</span>
+    
+    <span class="keyword">fun</span> handleConnectionLost() {
+        <span class="keyword">if</span> (retryCount < maxRetries) {
+            retryCount++
+            Handler(Looper.getMainLooper()).postDelayed({
+                reconnect()
+            }, retryDelay * retryCount)
+        } <span class="keyword">else</span> {
+            notifyConnectionFailed()
+        }
+    }
+    
+    <span class="keyword">private fun</span> reconnect() {
+        <span class="comment">// ICE Restart 시도</span>
+        peerConnection?.createOffer(
+            { sessionDescription ->
+                <span class="comment">// 새로운 offer로 재연결 시도</span>
+                peerConnection?.setLocalDescription(
+                    SimpleSdpObserver(),
+                    sessionDescription
+                )
+                signallingClient.sendOffer(sessionDescription)
+            },
+            { error ->
+                handleConnectionLost()
+            },
+            MediaConstraints().apply {
+                mandatory.add(
+                    MediaConstraints.KeyValuePair(<span class="string">"IceRestart"</span>, <span class="string">"true"</span>)
+                )
+            }
+        )
+    }
+}
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>13. AndroidManifest.xml 설정</h2>
+            <div class="code-block">
+&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span>?&gt;
+&lt;manifest xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span>
+    package=<span class="string">"com.voipex.android"</span>&gt;
+    
+    <span class="comment">&lt;!-- 권한 선언 --&gt;</span>
+    &lt;uses-permission android:name=<span class="string">"android.permission.INTERNET"</span> /&gt;
+    &lt;uses-permission android:name=<span class="string">"android.permission.CAMERA"</span> /&gt;
+    &lt;uses-permission android:name=<span class="string">"android.permission.RECORD_AUDIO"</span> /&gt;
+    &lt;uses-permission android:name=<span class="string">"android.permission.MODIFY_AUDIO_SETTINGS"</span> /&gt;
+    &lt;uses-permission android:name=<span class="string">"android.permission.ACCESS_NETWORK_STATE"</span> /&gt;
+    &lt;uses-permission android:name=<span class="string">"android.permission.WAKE_LOCK"</span> /&gt;
+    &lt;uses-permission android:name=<span class="string">"android.permission.FOREGROUND_SERVICE"</span> /&gt;
+    &lt;uses-permission android:name=<span class="string">"android.permission.SYSTEM_ALERT_WINDOW"</span> /&gt;
+    &lt;uses-permission android:name=<span class="string">"android.permission.VIBRATE"</span> /&gt;
+    
+    <span class="comment">&lt;!-- 카메라 하드웨어 요구사항 --&gt;</span>
+    &lt;uses-feature android:name=<span class="string">"android.hardware.camera"</span> /&gt;
+    &lt;uses-feature android:name=<span class="string">"android.hardware.camera.autofocus"</span> /&gt;
+    &lt;uses-feature android:name=<span class="string">"android.hardware.camera.front"</span> android:required=<span class="string">"false"</span> /&gt;
+    &lt;uses-feature android:name=<span class="string">"android.hardware.microphone"</span> android:required=<span class="string">"true"</span> /&gt;
+    
+    &lt;application
+        android:name=<span class="string">".VoipExApplication"</span>
+        android:allowBackup=<span class="string">"true"</span>
+        android:icon=<span class="string">"@mipmap/ic_launcher"</span>
+        android:label=<span class="string">"@string/app_name"</span>
+        android:theme=<span class="string">"@style/Theme.VoipEx"</span>
+        android:usesCleartextTraffic=<span class="string">"false"</span>&gt;
+        
+        <span class="comment">&lt;!-- 로그인 액티비티 --&gt;</span>
+        &lt;activity
+            android:name=<span class="string">".presentation.ui.auth.LoginActivity"</span>
+            android:windowSoftInputMode=<span class="string">"adjustResize"</span>&gt;
+            &lt;intent-filter&gt;
+                &lt;action android:name=<span class="string">"android.intent.action.MAIN"</span> /&gt;
+                &lt;category android:name=<span class="string">"android.intent.category.LAUNCHER"</span> /&gt;
+            &lt;/intent-filter&gt;
+        &lt;/activity&gt;
+        
+        <span class="comment">&lt;!-- 메인 액티비티 --&gt;</span>
+        &lt;activity
+            android:name=<span class="string">".presentation.ui.main.MainActivity"</span>
+            android:launchMode=<span class="string">"singleTop"</span> /&gt;
+        
+        <span class="comment">&lt;!-- 통화 액티비티 --&gt;</span>
+        &lt;activity
+            android:name=<span class="string">".presentation.ui.call.CallActivity"</span>
+            android:configChanges=<span class="string">"orientation|keyboardHidden|screenSize"</span>
+            android:launchMode=<span class="string">"singleTop"</span>
+            android:showWhenLocked=<span class="string">"true"</span>
+            android:turnScreenOn=<span class="string">"true"</span> /&gt;
+        
+        <span class="comment">&lt;!-- 수신 전화 액티비티 --&gt;</span>
+        &lt;activity
+            android:name=<span class="string">".presentation.ui.call.IncomingCallActivity"</span>
+            android:launchMode=<span class="string">"singleTop"</span>
+            android:showWhenLocked=<span class="string">"true"</span>
+            android:turnScreenOn=<span class="string">"true"</span> /&gt;
+        
+        <span class="comment">&lt;!-- 통화 서비스 --&gt;</span>
+        &lt;service
+            android:name=<span class="string">".service.CallService"</span>
+            android:foregroundServiceType=<span class="string">"phoneCall"</span>
+            android:exported=<span class="string">"false"</span> /&gt;
+        
+        <span class="comment">&lt;!-- FCM 서비스 --&gt;</span>
+        &lt;service
+            android:name=<span class="string">".service.VoipExFirebaseMessagingService"</span>
+            android:exported=<span class="string">"false"</span>&gt;
+            &lt;intent-filter&gt;
+                &lt;action android:name=<span class="string">"com.google.firebase.MESSAGING_EVENT"</span> /&gt;
+            &lt;/intent-filter&gt;
+        &lt;/service&gt;
+        
+    &lt;/application&gt;
+&lt;/manifest&gt;
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>14. 릴리즈 체크리스트</h2>
+            <div class="warning">
+                <h4>배포 전 필수 확인사항</h4>
+                <table>
+                    <tr>
+                        <th>항목</th>
+                        <th>확인</th>
+                        <th>비고</th>
+                    </tr>
+                    <tr>
+                        <td>서버 URL 변경</td>
+                        <td>□</td>
+                        <td>개발 서버 → 프로덕션 서버</td>
+                    </tr>
+                    <tr>
+                        <td>디버그 로그 제거</td>
+                        <td>□</td>
+                        <td>Log.d() 호출 제거 또는 BuildConfig.DEBUG 체크</td>
+                    </tr>
+                    <tr>
+                        <td>ProGuard 설정</td>
+                        <td>□</td>
+                        <td>minifyEnabled true, 규칙 확인</td>
+                    </tr>
+                    <tr>
+                        <td>서명 키</td>
+                        <td>□</td>
+                        <td>릴리즈 키스토어 생성 및 안전한 보관</td>
+                    </tr>
+                    <tr>
+                        <td>버전 정보</td>
+                        <td>□</td>
+                        <td>versionCode, versionName 업데이트</td>
+                    </tr>
+                    <tr>
+                        <td>권한 설명</td>
+                        <td>□</td>
+                        <td>Play Console에 권한 사용 이유 작성</td>
+                    </tr>
+                    <tr>
+                        <td>개인정보처리방침</td>
+                        <td>□</td>
+                        <td>URL 준비 및 앱 내 링크</td>
+                    </tr>
+                    <tr>
+                        <td>크래시 리포팅</td>
+                        <td>□</td>
+                        <td>Firebase Crashlytics 설정</td>
+                    </tr>
+                    <tr>
+                        <td>분석 도구</td>
+                        <td>□</td>
+                        <td>Firebase Analytics 설정</td>
+                    </tr>
+                    <tr>
+                        <td>테스트</td>
+                        <td>□</td>
+                        <td>다양한 기기에서 테스트 완료</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>15. 향후 개선사항</h2>
+            <ul>
+                <li><strong>그룹 통화 지원:</strong> 다자간 영상 회의 기능 추가</li>
+                <li><strong>화면 공유:</strong> 모바일 화면 공유 기능</li>
+                <li><strong>채팅 기능:</strong> 통화 중 텍스트 메시지 전송</li>
+                <li><strong>통화 녹음:</strong> 로컬 녹음 및 서버 저장</li>
+                <li><strong>통화 품질 표시:</strong> 네트워크 상태 시각화</li>
+                <li><strong>다크 모드:</strong> 시스템 테마 연동</li>
+                <li><strong>생체 인증:</strong> 지문/얼굴 인식 로그인</li>
+                <li><strong>통화 예약:</strong> 예약 통화 기능</li>
+                <li><strong>백그라운드 블러:</strong> 영상 통화 배경 효과</li>
+                <li><strong>노이즈 캔슬링:</strong> AI 기반 소음 제거</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
