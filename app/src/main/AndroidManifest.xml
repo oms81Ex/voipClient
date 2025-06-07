@@ -29,12 +29,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Voipex"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="31">
 
+        <!-- Guest Login Activity를 런처 액티비티로 설정 -->
         <activity
-            android:name=".ui.auth.LoginActivity"
+            android:name=".ui.guest.GuestLoginActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Voipex.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -42,12 +45,32 @@
         </activity>
 
         <activity
+            android:name=".ui.auth.LoginActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".ui.auth.RegisterActivity"
+            android:windowSoftInputMode="adjustResize" />
+            
+        <activity
+            android:name=".ui.auth.RegistrationActivity"
+            android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.main.MainActivity"
-            android:launchMode="singleTop" />
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
+        <!-- Guest Users Activity -->
+        <activity
+            android:name=".ui.guest.GuestUsersActivity"
+            android:exported="false"
+            android:label="온라인 게스트"
+            android:parentActivityName=".ui.main.MainActivity"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.call.CallActivity"

@@ -2,28 +2,30 @@ package com.ntdt.voipex.utils
 
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
+import retrofit2.Response
 
 object ErrorUtils {
-    fun showError(view: View, message: String, duration: Int = Snackbar.LENGTH_LONG) {
-        Snackbar.make(view, message, duration).apply {
-            setAction("Dismiss") {
-                dismiss()
-            }
-        }.show()
+    fun parseError(response: Response<*>): String {
+        return try {
+            val errorBody = response.errorBody()?.string()
+            errorBody ?: "Unknown error occurred"
+        } catch (e: Exception) {
+            "Error parsing response: ${e.message}"
+        }
     }
-
+    
     fun showError(
         view: View,
         message: String,
-        actionText: String,
-        action: () -> Unit,
-        duration: Int = Snackbar.LENGTH_LONG
+        actionText: String? = null,
+        action: (() -> Unit)? = null
     ) {
-        Snackbar.make(view, message, duration).apply {
-            setAction(actionText) {
-                action()
-                dismiss()
-            }
-        }.show()
+        val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+        
+        if (actionText != null && action != null) {
+            snackbar.setAction(actionText) { action() }
+        }
+        
+        snackbar.show()
     }
-} 
+}

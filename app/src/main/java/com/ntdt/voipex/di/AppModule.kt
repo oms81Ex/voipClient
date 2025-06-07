@@ -22,7 +22,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWebRTCManager(@ApplicationContext context: Context): WebRTCManager {
-        return WebRTCManager(context)
+    fun provideContext(@ApplicationContext context: Context): Context {
+        return context
     }
 } 

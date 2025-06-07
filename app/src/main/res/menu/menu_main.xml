@@ -3,16 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_call_history"
-        android:icon="@drawable/ic_history"
-        android:title="Call History"
-        app:showAsAction="ifRoom" />
+        android:title="통화 기록"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_settings"
-        android:icon="@drawable/ic_settings"
-        android:title="Settings"
+        android:title="설정"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_switch_account"
+        android:title="계정으로 로그인"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_logout"
-        android:title="Logout"
+        android:title="로그아웃"
         app:showAsAction="never" />
 </menu> 

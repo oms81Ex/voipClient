@@ -1,20 +1,22 @@
 package com.ntdt.voipex.utils
 
 object Constants {
-    // API Gateway (로컬 테스트용)
-    private const val API_GATEWAY = "http://192.168.0.10:8080"
+    // API Gateway (서버 환경)
+    // 에뮬레이터에서는 10.0.2.2가 호스트 머신의 localhost를 가리킴
+    private const val API_GATEWAY = "http://10.0.2.2:3000"
     
     // Server URLs
-    const val SIGNALING_SERVER_URL = "http://192.168.0.10:3000"
+    const val SIGNALING_SERVER_URL = "http://10.0.2.2:3004"
     
     // WebRTC Configuration
-    const val STUN_SERVER_URL = "stun:192.168.0.10:3478"
+    const val STUN_SERVER_URL = "stun:stun.l.google.com:19302"
     val TURN_SERVER_URLS = listOf(
-        "turn:192.168.0.10:3478?transport=udp",
-        "turn:192.168.0.10:3478?transport=tcp"
+        "turn:openrelay.metered.ca:80",
+        "turn:openrelay.metered.ca:443",
+        "turn:openrelay.metered.ca:443?transport=tcp"
     )
-    const val TURN_USERNAME = "voipex"
-    const val TURN_CREDENTIAL = "voipex123"
+    const val TURN_USERNAME = "openrelayproject"
+    const val TURN_CREDENTIAL = "openrelayproject"
     
     // Video Configuration
     const val VIDEO_WIDTH = 1280

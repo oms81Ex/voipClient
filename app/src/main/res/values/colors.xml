@@ -7,4 +7,17 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- 기본 색상 -->
+    <color name="primary">#2196F3</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="accent">#FF4081</color>
+    <color name="text_secondary">#757575</color>
+    
+    <!-- 게스트 모드 관련 색상 -->
+    <color name="guest_mode_color">#FF6B6B</color>
+    <color name="guest_banner_background">#FF8787</color>
+    <color name="warning_color">#FFA726</color>
+    <color name="warning_background">#FFF3E0</color>
+    <color name="success_color">#66BB6A</color>
 </resources>

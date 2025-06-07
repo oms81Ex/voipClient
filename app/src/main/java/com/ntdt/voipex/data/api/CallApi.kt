@@ -22,6 +22,16 @@ interface CallApi {
         @Path("userId") userId: String,
         @Body request: IceCandidateRequest
     )
+
+    // --- REST API for call create/join ---
+    @POST("calls")
+    suspend fun createCall(@Body request: CreateCallRequest): CreateCallResponse
+
+    @POST("calls/{callId}/join")
+    suspend fun joinCall(@Path("callId") callId: String): JoinCallResponse
+    
+    @POST("calls/create-guest-call")
+    suspend fun createGuestCall(@Body request: CreateGuestCallRequest): CreateGuestCallResponse
 }
 
 data class CallOfferRequest(
@@ -36,4 +46,43 @@ data class IceCandidateRequest(
     val candidate: String,
     val sdpMid: String?,
     val sdpMLineIndex: Int?
+)
+
+// --- REST Call Data Classes ---
+data class CreateCallRequest(
+    val calleeId: String
+)
+data class CreateCallResponse(
+    val callId: String,
+    val status: String
+)
+data class JoinCallResponse(
+    val callId: String,
+    val status: String
+)
+
+// Guest Call Data Classes
+data class CreateGuestCallRequest(
+    val callerId: String,
+    val calleeId: String,
+    val callerName: String,
+    val calleeName: String,
+    val callType: String = "audio"
+)
+
+data class CreateGuestCallResponse(
+    val status: String,
+    val data: GuestCallData
+)
+
+data class GuestCallData(
+    val callId: String,
+    val roomId: String,
+    val callerId: String,
+    val calleeId: String,
+    val callerName: String,
+    val calleeName: String,
+    val callType: String,
+    val status: String,
+    val createdAt: String
 ) 

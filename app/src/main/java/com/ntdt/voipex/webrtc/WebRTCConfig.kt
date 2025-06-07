@@ -6,8 +6,23 @@ import org.webrtc.MediaConstraints
 import javax.inject.Inject
 import javax.inject.Singleton
 
+data class IceServerConfig(
+    val urls: List<String>,
+    val username: String? = null,
+    val credential: String? = null
+)
+
 @Singleton
 class WebRTCConfig @Inject constructor() {
+    
+    private val iceServerConfigs: List<IceServerConfig> = listOf(
+        IceServerConfig(listOf(Constants.STUN_SERVER_URL)),
+        IceServerConfig(
+            urls = Constants.TURN_SERVER_URLS,
+            username = Constants.TURN_USERNAME,
+            credential = Constants.TURN_CREDENTIAL
+        )
+    )
     
     fun getIceServers(): List<PeerConnection.IceServer> {
         val iceServers = mutableListOf<PeerConnection.IceServer>()

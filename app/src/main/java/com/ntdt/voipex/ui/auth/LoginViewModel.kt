@@ -1,5 +1,8 @@
 package com.ntdt.voipex.ui.auth
 
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ntdt.voipex.data.manager.GuestSessionManager
@@ -12,9 +15,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase,
-    private val guestSessionManager: GuestSessionManager
-) : ViewModel() {
+    private val app: Application,
+    private val loginUseCase: LoginUseCase
+) : AndroidViewModel(app) {
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Initial)
     val uiState: StateFlow<LoginUiState> = _uiState
@@ -45,8 +48,19 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _uiState.value = LoginUiState.Loading
-                guestSessionManager.createGuestSession(name)
-                _uiState.value = LoginUiState.Success
+                val result = loginUseCase.loginAsGuest(name)
+                result.onSuccess { authResponse ->
+                    val prefs = getApplication<Application>().getSharedPreferences("VoipExPrefs", Context.MODE_PRIVATE)
+                    prefs.edit()
+                        .putString("auth_token", authResponse.accessToken)
+                        .putString("guest_id", authResponse.user.id)
+                        .putString("guest_name", authResponse.user.name)
+                        .putBoolean("is_guest", true)
+                        .apply()
+                    _uiState.value = LoginUiState.Success
+                }.onFailure { e ->
+                    _uiState.value = LoginUiState.Error(e.message ?: "Failed to create guest session")
+                }
             } catch (e: Exception) {
                 _uiState.value = LoginUiState.Error(e.message ?: "Failed to create guest session")
             }

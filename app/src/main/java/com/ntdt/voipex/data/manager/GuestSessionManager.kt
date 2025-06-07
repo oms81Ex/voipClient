@@ -57,4 +57,4 @@ class GuestSessionManager @Inject constructor(
     private fun updateGuestUsersList() {
         _guestUsersFlow.value = guestUsers.values.toList()
     }
-} 
+}
