@@ -21,7 +21,7 @@ android {
         
         // BuildConfig fields
         buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:3000/api/\"")
-        buildConfigField("String", "SOCKET_URL", "\"http://10.0.2.2:3004\"")
+        buildConfigField("String", "SOCKET_URL", "\"ws://10.0.2.2:3004\"")
     }
 
     buildTypes {
