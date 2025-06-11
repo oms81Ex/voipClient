@@ -314,7 +314,7 @@ class MainActivity : AppCompatActivity() {
                     })
                     .build()
                 val retrofit = Retrofit.Builder()
-                    .baseUrl("http://10.0.2.2:3000/api/") // api-gateway 포트로 변경
+                    .baseUrl("http://10.47.16.163:3000/api/") // api-gateway 포트로 변경
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
@@ -387,7 +387,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 .build()
             val retrofit = Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:3000/api/")
+                .baseUrl("http://10.47.16.163:3000/api/")
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -417,7 +417,7 @@ class MainActivity : AppCompatActivity() {
             }
             .build()
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3002/")  // user-service의 올바른 포트
+            .baseUrl("http://10.47.16.163:3002/")  // user-service의 올바른 포트
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -459,7 +459,7 @@ class MainActivity : AppCompatActivity() {
             }
             .build()
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3000/api/")
+            .baseUrl("http://10.47.16.163:3000/api/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -511,7 +511,7 @@ class MainActivity : AppCompatActivity() {
             }
             .build()
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3000/api/")
+            .baseUrl("http://10.47.16.163:3000/api/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -556,7 +556,7 @@ class MainActivity : AppCompatActivity() {
             }
             .build()
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3000/api/")
+            .baseUrl("http://10.47.16.163:3000/api/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -1013,7 +1013,7 @@ class MainActivity : AppCompatActivity() {
             .build()
             
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3002/")  // user-service의 올바른 포트
+            .baseUrl("http://10.47.16.163:3002/")  // user-service의 올바른 포트
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

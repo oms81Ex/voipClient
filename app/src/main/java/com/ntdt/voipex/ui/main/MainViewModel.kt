@@ -95,7 +95,7 @@ class MainViewModel @Inject constructor(
                 .build()
                 
             val retrofit = Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:3000/api/")
+                .baseUrl("http://10.47.16.163:3000/api/")
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

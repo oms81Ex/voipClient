@@ -3,10 +3,10 @@ package com.ntdt.voipex.utils
 object Constants {
     // API Gateway (서버 환경)
     // 에뮬레이터에서는 10.0.2.2가 호스트 머신의 localhost를 가리킴
-    private const val API_GATEWAY = "http://10.0.2.2:3000"
+    private const val API_GATEWAY = "http://10.47.16.163:3000"
     
     // Server URLs
-    const val SIGNALING_SERVER_URL = "http://10.0.2.2:3004"
+    const val SIGNALING_SERVER_URL = "http://10.47.16.163:3004"
     
     // WebRTC Configuration
     const val STUN_SERVER_URL = "stun:stun.l.google.com:19302"

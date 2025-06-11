@@ -80,7 +80,7 @@ class GuestSignalingClient @Inject constructor(
             options.query = "userId=${guestUser.id}&name=${guestUser.name}&isGuest=true"
             options.auth = mapOf("token" to token)
             
-            socket = IO.socket("http://10.0.2.2:3004", options)
+            socket = IO.socket("http://10.47.16.163:3004", options)
             
             setupEventListeners()
             
